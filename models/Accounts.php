@@ -10,6 +10,7 @@ class Accounts {
     public $password;
     public $email;
     public $role_id;
+    public $picture;
     public $member_since;
 
     private $_table = 'cb_accounts';
@@ -25,17 +26,20 @@ class Accounts {
             $this->email = $params['email'];
             $this->password = $params['password'];
             $this->role_id = $params['role_id'];
+            $this->picture = $params['picture'];
 
             $query = 'INSERT INTO '.$this->_table.' SET 
                       username = :username,
                       password = :password,
                       email = :email,
+                      picture = :picture,
                       role_id = :role_id';
 
             $stmt = $this->_connection->prepare($query);
             $stmt->bindValue('username', $this->username);
             $stmt->bindValue('email', $this->email);
             $stmt->bindValue('password', $this->password);
+            $stmt->bindValue('picture', $this->picture);
             $stmt->bindValue('role_id', $this->role_id);
 
             if($stmt->execute()) {
@@ -53,21 +57,18 @@ class Accounts {
         try {
             $this->account_id = $params['account_id'];
             $this->username = $params['username'];
-            $this->email = $params['email'];
-            $this->role_id = $params['role_id'];
+            $this->picture = $params['picture'];
 
             $query = 'UPDATE '.$this->_table.' SET 
                       username = :username,
-                      email = :email,
-                      role_id = :role_id WHERE
+                      picture = :picture
+                      WHERE 
                       account_id = :account_id';
 
             $stmt = $this->_connection->prepare($query);
             $stmt->bindValue('username', $this->username);
-            $stmt->bindValue('email', $this->email);
-            $stmt->bindValue('password', $this->password);
-            $stmt->bindValue('role_id', $this->role_id);
-            $stmt->bincValue('account_id', $this->account_id);
+            $stmt->bindValue('picture', $this->picture);
+            $stmt->bindValue('account_id', $this->account_id);
 
             if($stmt->execute()) {
                 return true;
@@ -107,7 +108,7 @@ class Accounts {
             $this->account_id = $id;
 
             $query = 'SELECT username,
-                      email, role_id FROM '.$this->_table.' 
+                      email, role_id, picture FROM '.$this->_table.' 
                       WHERE account_id = :account_id';
 
             $stmt = $this->_connection->prepare($query);

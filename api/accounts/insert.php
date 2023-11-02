@@ -60,7 +60,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 HASH_PASS_SECRET_KEY
             ),
             'role_id' => $_POST['role_id'],
-            'picture' => $_POST['picture']
+            'picture' => $actual_fname
         ];
 
         if($account->insert($params)) {

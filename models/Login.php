@@ -29,7 +29,7 @@ class Login {
             $this->password = $params['password'];
 
             $query = 'SELECT r.role_title as rolename,
-                      a.account_id FROM '.$this->_table.' a LEFT JOIN
+                      a.account_id, a.role_id FROM '.$this->_table.' a LEFT JOIN
                       cb_roles r ON r.role_id = a.role_id WHERE
                       a.email = :email AND a.password = :password
                       LIMIT 0,1';

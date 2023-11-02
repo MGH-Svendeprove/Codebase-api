@@ -38,7 +38,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
     if($data->rowCount()) {
         $usr = [];
         while($row = $data->fetch(PDO::FETCH_OBJ)) {
-            $usr[] = [
+            $usr = [
                 'username' => openssl_decrypt(
                     $row->username,
                     OPENSSL_CIPHERING,
@@ -53,7 +53,8 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
                     OPENSSL_OPTIONS,
                     OPENSSL_ENCRYPT_IV
                 ),
-                'role_id' => $row->role_id
+                'role_id' => $row->role_id,
+                'picture' => $row->picture
             ];
         }
 

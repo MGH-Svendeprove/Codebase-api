@@ -33,14 +33,12 @@ $db = $database->connect();
 $account = new Accounts($db);
 
 $data = $account->checkAdmin();
-if($data->rowCount() > 0) {
+if($data->rowCount()) {
     while($row = $data->fetch(PDO::FETCH_OBJ)) {
         if($row->rolename != 'Admin') {
-            echo json_encode(['status' => 'false']);
+            echo false;
         } else {
-            echo json_encode(['status' => 'true']);
+            echo true;
         }
     }
-} else {
-    echo json_encode(['status' => 'false']);
 }

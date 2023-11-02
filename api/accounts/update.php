@@ -33,7 +33,7 @@ $db = $database->connect();
  */
 $account = new Accounts($db);
 
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ori_file = $_FILES['file']['name'];
     $target_path = '../../assets/img/accounts/uploads/';
     $actual_fname = $_POST['username'] . '-' . $_FILES['file']['name'];
@@ -47,20 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
                 OPENSSL_OPTIONS,
                 OPENSSL_ENCRYPT_IV
             ),
-            'email' => openssl_encrypt(
-                $_POST['email'],
-                OPENSSL_CIPHERING,
-                OPENSSL_ENCRYP_KEY,
-                OPENSSL_OPTIONS,
-                OPENSSL_ENCRYPT_IV
-            ),
-            'password' => hash_hmac(
-                'sha512',
-                $_POST['password'],
-                HASH_PASS_SECRET_KEY
-            ),
-            'role_id' => $_POST['role_id'],
-            'picture' => $_POST['picture'],
+            'picture' => $actual_fname,
             'account_id' => $_POST['account_id']
         ];
 
