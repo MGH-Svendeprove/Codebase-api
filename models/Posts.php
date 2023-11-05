@@ -28,7 +28,7 @@ class Posts {
 
             $query = 'INSERT INTO '.$this->_table.' SET 
                       account_id = :account_id,
-                      category_id = :category_id
+                      category_id = :category_id,
                       subject = :subject,
                       content = :content';
 
@@ -85,11 +85,10 @@ class Posts {
 
             $this->post_id = $id;
 
-            $query = 'SELECT c.cat_title as category_name,
-                      p.account_id, p.category_id,
-                      p.subject, p.content, p.post_datetime 
-                      FROM '.$this->_table.' p LEFT JOIN cb_categories c 
-                      ON c.category_id = p.category_id LEFT JOIN accounts a
+            $query = 'SELECT a.username as username,
+                      p.post_id, p.account_id, 
+                      p.subject, p.content, p.post_datetime, a.username  
+                      FROM '.$this->_table.' p LEFT JOIN cb_accounts a
                       ON a.account_id = p.account_id
                       WHERE post_id = :post_id';
 
@@ -113,8 +112,10 @@ class Posts {
                       p.post_id, p.account_id, 
                       p.subject, p.content, p.post_datetime
                       FROM '.$this->_table.' p 
-                      LEFT JOIN accounts a ON a.account_id = p.account_id 
-                      WHERE category_id = :category_id';
+                      LEFT JOIN cb_accounts a ON
+                      a.account_id = p.account_id  
+                      WHERE category_id = :category_id 
+                      ORDER BY p.post_datetime DESC';
 
             $stmt = $this->_connection->prepare($query);
             $stmt->bindValue('category_id', $this->category_id);
@@ -122,6 +123,19 @@ class Posts {
 
             return $stmt;
 
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function countAnswers($post_id) {
+        try {
+            $this->post_id = $post_id;
+            $query = 'SELECT * FROM cb_answers WHERE post_id = :post_id';
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('post_id', $this->post_id);
+            $stmt->execute();
+            return $stmt;
         } catch (PDOException $e) {
             echo $e->getMessage();
         }

@@ -80,6 +80,25 @@ class Accounts {
         }
     }
 
+    public function check_password($params) {
+        try {
+            $this->password = $params['old_password'];
+            $this->account_id = $params['account_id'];
+
+            $query = 'SELECT password FROM '.$this->_table.' WHERE password = :password AND account_id = :account_id';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('password', $this->password);
+            $stmt->bindValue('account_id', $this->account_id);
+            if($stmt->execute()) {
+                return true;
+            }
+            return false;
+        } catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
     public function update_password($params) {
         try {
 

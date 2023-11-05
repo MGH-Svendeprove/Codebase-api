@@ -51,8 +51,16 @@ class Answers {
 
             $this->post_id = $post_id;
 
-            $query = 'SELECT * FROM '.$this->_table.' 
-            WHERE post_id = :post_id';
+            $query = 'SELECT a.username as username, 
+                      c.answer_id, 
+                      c.post_id, 
+                      c.account_id,
+                      c.content,
+                      c.answer_datetime 
+                      FROM '.$this->_table.' c 
+                      LEFT JOIN cb_accounts a 
+                      ON a.account_id = c.account_id 
+                      WHERE post_id = :post_id';
 
             $stmt = $this->_connection->prepare($query);
             $stmt->bindValue('post_id', $this->post_id);

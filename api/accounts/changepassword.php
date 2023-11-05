@@ -33,8 +33,14 @@ $db = $database->connect();
  */
 $account = new Accounts($db);
 
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
     $params = [
+        'old_password' => hash_hmac(
+            'sha512', $_POST['old_password'],
+            HASH_PASS_SECRET_KEY
+        ),
         'password' => hash_hmac(
             'sha512',
             $_POST['password'],
@@ -43,9 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         'account_id' => $_POST['account_id']
     ];
 
-    if ($account->update_password($params)) {
-        echo json_encode(['message' => 'Password has been updated']);
+    if($account->check_password($params)) {
+        if ($account->update_password($params)) {
+            echo json_encode(['message' => 'Password has been updated']);
+        } else {
+            echo json_encode(['message' => 'Password could not be updated']);
+        }
     } else {
-        echo json_encode(['message' => 'Password could not be updated']);
+        echo json_encode(['message' => 'Password was not a match']);
     }
+
+
 }

@@ -15,7 +15,7 @@ header('Access-Control-Allow-Methods: *');
 
 include_once('../../config/Database.php');
 include_once('../../config/settings.php');
-include_once('../../models/Posts.php');
+include_once('../../models/Categories.php');
 
 /*
  * We are creating a database object which we now can get use of
@@ -24,19 +24,21 @@ include_once('../../models/Posts.php');
 $database = new Database();
 $db = $database->connect();
 
-$post = new Posts($db);
+$cats = new Categories($db);
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $params = [
-        'account_id' => $_POST['account_id'],
-        'category_id' => $_POST['category_id'],
-        'subject' => $_POST['subject'],
-        'content' => $_POST['content']
-    ];
+if($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    if($post->insert($params)) {
-        echo json_encode(['message' => 'Post has been created']);
-    } else {
-        echo json_encode(['message' => 'Post could not be created']);
+    $data = $cats->select($_GET['id']);
+    if($data->rowCount()) {
+        $category = [];
+        while($row = $data->fetch(PDO::FETCH_OBJ)) {
+            $category = [
+                'category_id' => $row->category_id,
+                'cat_title' => $row->cat_title,
+                'cat_picture' => $row->cat_picture
+            ];
+        }
+
+        echo json_encode($category);
     }
 }

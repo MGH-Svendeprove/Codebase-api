@@ -35,6 +35,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
         $posts = [];
 
         while($row = $data->fetch(PDO::FETCH_OBJ)) {
+            $answers = $post->countAnswers($row->post_id);
             $posts[] = [
                 'post_id' => $row->post_id,
                 'account_id' => $row->account_id,
@@ -46,10 +47,13 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
                     OPENSSL_ENCRYPT_IV),
                 'subject' => $row->subject,
                 'content' => $row->content,
-                'post_datetime' => $row->post_datetime
+                'counter' => $answers->rowCount(),
+                'post_datetime' => date("d.m.Y H:i:s", strtotime($row->post_datetime))
             ];
         }
         echo json_encode($posts);
+    } else {
+        echo json_encode(['message' => 'There is no posts in this category']);
     }
-    echo json_encode(['message' => 'There is no posts in this category']);
+
 }

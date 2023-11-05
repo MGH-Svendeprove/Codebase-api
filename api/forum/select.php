@@ -46,13 +46,15 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
                     OPENSSL_ENCRYPT_IV),
                 'subject' => $row->subject,
                 'content' => $row->content,
-                'post_datetime' => $row->post_datetime
+                'post_datetime' => date("d.m.Y H:i:s", strtotime($row->post_datetime))
             ];
         }
 
         echo json_encode($posts);
 
+    } else {
+        echo json_encode(['message' => 'post does not exists in the system']);
     }
 
-    echo json_encode(['message' => 'post does not exists in the system']);
+
 }

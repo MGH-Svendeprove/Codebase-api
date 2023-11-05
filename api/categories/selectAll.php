@@ -15,7 +15,7 @@ header('Access-Control-Allow-Methods: *');
 
 include_once('../../config/Database.php');
 include_once('../../config/settings.php');
-include_once('../../models/Answers.php');
+include_once('../../models/Categories.php');
 
 /*
  * We are creating a database object which we now can get use of
@@ -24,35 +24,26 @@ include_once('../../models/Answers.php');
 $database = new Database();
 $db = $database->connect();
 
-$ans = new Answers($db);
+$cats = new Categories($db);
 
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $data = $ans->selectAll($_GET['id']);
+    $data = $cats->selectAll();
 
     if($data->rowCount()) {
-
-        $answer = [];
-
+        $categories = [];
         while($row = $data->fetch(PDO::FETCH_OBJ)) {
-            $answer[] = [
-                'account_id' => $row->account_id,
-                'username' => openssl_decrypt(
-                    $row->username,
-                    OPENSSL_CIPHERING,
-                    OPENSSL_ENCRYP_KEY,
-                    OPENSSL_OPTIONS,
-                    OPENSSL_ENCRYPT_IV),
-                'post_id' => $row->post_id,
-                'content' => $row->content,
-                'answer_datetime' => date("d.m.Y H:i:s", strtotime($row->answer_datetime))
+            $postsData = $cats->count_posts_categories($row->category_id);
+            $categories[] = [
+                'category_id' => $row->category_id,
+                'cat_title' => $row->cat_title,
+                'cat_picture' => $row->cat_picture,
+                'cat_counter' => $postsData->rowCount()
             ];
         }
 
-        echo json_encode($answer);
+        echo json_encode($categories);
     } else {
-        echo json_encode(['message' => 'There is now answers to this post yet']);
+        echo json_encode(['message' => 'There is no categories']);
     }
-
-
 }

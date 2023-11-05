@@ -28,13 +28,10 @@ $ans = new Answers($db);
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $input = json_decode(file_get_contents('php://input'));
-
     $params = [
-        'account_id' => $input->account_id,
-        'post_id' => $input->post_id,
-        'content' => $input->content,
-        'answer_datetime' => $input->answer_datetime
+        'account_id' => $_POST['account_id'],
+        'post_id' => $_POST['post_id'],
+        'content' => $_POST['content']
     ];
 
     if($ans->insert($params)) {
