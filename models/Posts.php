@@ -130,12 +130,43 @@ class Posts {
 
     public function countAnswers($post_id) {
         try {
+
             $this->post_id = $post_id;
+
             $query = 'SELECT * FROM cb_answers WHERE post_id = :post_id';
+
             $stmt = $this->_connection->prepare($query);
             $stmt->bindValue('post_id', $this->post_id);
             $stmt->execute();
+
             return $stmt;
+
+        } catch (PDOException $e) {
+
+            echo $e->getMessage();
+
+        }
+    }
+
+    public function latestPosts() {
+        try {
+
+            $query = 'SELECT a.username as username,
+                      p.post_id, p.account_id, 
+                      p.subject, p.content, p.post_datetime
+                      FROM '.$this->_table.' p 
+                      LEFT JOIN cb_accounts a ON
+                      a.account_id = p.account_id  
+                      LEFT JOIN cb_categories c 
+                      ON c.category_id = p.category_id 
+                      ORDER BY p.post_datetime DESC
+                      LIMIT 5';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->execute();
+
+            return $stmt;
+
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
