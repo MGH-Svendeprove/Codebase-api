@@ -26,18 +26,30 @@ $db = $database->connect();
 
 $post = new Posts($db);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $params = [
-        'post_id' => $_POST['post_id'],
-        'account_id' => $_POST['account_id'],
-        'category_id' => $_POST['category_id'],
-        'subject' => $_POST['subject'],
-        'content' => $_POST['content']
-    ];
+if($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    if ($post->update($params)) {
-        echo json_encode(['message' => 'Post has been updated']);
+    $data = $post->myPosts($_GET['id']);
+
+    if($data->rowCount()) {
+
+        $posts = [];
+
+        while($row = $data->fetch(PDO::FETCH_OBJ)) {
+
+            $posts[] = [
+                'post_id' => $row->post_id,
+                'category' => $row->category,
+                'subject' => $row->subject,
+                'post_datetime' => $row->post_datetime
+            ];
+        }
+
+        echo json_encode($posts);
+
     } else {
-        echo json_encode(['message' => 'Post could not be updated']);
+
+        echo json_encode(['message' => 'You have no posts written yet']);
+
     }
+
 }

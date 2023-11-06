@@ -38,6 +38,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
             $posts = [
                 'post_id' => $row->post_id,
                 'account_id' => $row->account_id,
+                'category_id' => $row->category_id,
                 'username' => openssl_decrypt(
                     $row->username,
                     OPENSSL_CIPHERING,

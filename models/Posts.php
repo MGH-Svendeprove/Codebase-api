@@ -86,7 +86,7 @@ class Posts {
             $this->post_id = $id;
 
             $query = 'SELECT a.username as username,
-                      p.post_id, p.account_id, 
+                      p.post_id, p.account_id, p.category_id, 
                       p.subject, p.content, p.post_datetime, a.username  
                       FROM '.$this->_table.' p LEFT JOIN cb_accounts a
                       ON a.account_id = p.account_id
@@ -167,6 +167,28 @@ class Posts {
 
             return $stmt;
 
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function myPosts($account_id) {
+        try {
+            $this->account_id = $account_id;
+
+            $query = 'SELECT c.cat_title as category, 
+                      p.post_id, p.account_id, p.category_id, 
+                      p.subject, p.post_datetime 
+                      FROM '.$this->_table.' p 
+                      LEFT JOIN cb_categories c  
+                      ON c.category_id = p.category_id
+                      WHERE account_id = :account_id';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('account_id', $this->account_id);
+            $stmt->execute();
+
+            return $stmt;
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
