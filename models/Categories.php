@@ -17,6 +17,59 @@ class Categories {
         $this->_connection = $db;
     }
 
+    public function insert($params) {
+        try {
+
+            $this->cat_title = $params['cat_title'];
+            $this->cat_picture = $params['cat_picture'];
+
+            $query = 'INSERT INTO '.$this->_table.' SET
+                      cat_title = :cat_title,
+                      cat_picture = :cat_picture';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('cat_title', $this->cat_title);
+            $stmt->bindValue('cat_picture', $this->cat_picture);
+
+            if($stmt->execute()) {
+                return true;
+            }
+
+            return false;
+
+        } catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function update($params) {
+        try {
+
+            $this->category_id = $params['category_id'];
+            $this->cat_title = $params['cat_title'];
+            $this->cat_picture = $params['cat_picture'];
+
+            $query = 'UPDATE '.$this->_table.' SET 
+                      cat_title = :cat_title,
+                      cat_picture = :cat_picture
+                      WHERE category_id = :category_id';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('category_id', $this->category_id);
+            $stmt->bindValue('cat_title', $this->cat_title);
+            $stmt->bindValue('cat_picture', $this->cat_picture);
+
+            if($stmt->execute()) {
+                return true;
+            }
+
+            return false;
+
+        } catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
     public function selectAll() {
         try {
 
