@@ -14,6 +14,7 @@ header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Methods: *');
 
 include_once('../../config/Database.php');
+include_once('../../config/settings.php');
 include_once('../../models/Accounts.php');
 
 /*
@@ -33,34 +34,12 @@ $db = $database->connect();
 $account = new Accounts($db);
 
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $data = $account->select($_GET['id']);
+
+    $data = $account->countAllAccounts();
 
     if($data->rowCount()) {
-        $usr = [];
-        while($row = $data->fetch(PDO::FETCH_OBJ)) {
-            $usr = [
-                'username' => openssl_decrypt(
-                    $row->username,
-                    OPENSSL_CIPHERING,
-                    OPENSSL_ENCRYP_KEY,
-                    OPENSSL_OPTIONS,
-                    OPENSSL_ENCRYPT_IV
-                ),
-                'email' => openssl_decrypt(
-                    $row->email,
-                    OPENSSL_CIPHERING,
-                    OPENSSL_ENCRYP_KEY,
-                    OPENSSL_OPTIONS,
-                    OPENSSL_ENCRYPT_IV
-                ),
-                'role_id' => $row->role_id,
-                'picture' => $row->picture,
-                'account_id' => $row->account_id
-            ];
-        }
-
-        echo json_encode($usr);
+        echo json_encode(['total' => $data->rowCount()]);
     } else {
-        echo json_encode(['message' => 'There is no data to show.']);
+        echo json_encode(['total' => '0']);
     }
 }

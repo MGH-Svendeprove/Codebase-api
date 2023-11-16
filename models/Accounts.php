@@ -122,11 +122,34 @@ class Accounts {
         }
     }
 
+    public function update_role($params) {
+        try {
+            $this->account_id = $params['account_id'];
+            $this->role_id = $params['role_id'];
+
+            $query = 'UPDATE '.$this->_table.' SET 
+                      role_id = :role_id 
+                      WHERE account_id = :account_id';
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->bindValue('role_id', $this->role_id);
+            $stmt->bindValue('account_id', $this->account_id);
+
+            if($stmt->execute()) {
+                return true;
+            }
+
+            return false;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
     public function select($id) {
         try {
             $this->account_id = $id;
 
-            $query = 'SELECT username,
+            $query = 'SELECT account_id, username,
                       email, role_id, picture FROM '.$this->_table.' 
                       WHERE account_id = :account_id';
 
@@ -145,12 +168,28 @@ class Accounts {
         try {
 
             $query = 'SELECT r.role_title as rolename,
-                      a.username, a.email, a.role_id, a.member_since 
+                      a.account_id, a.username, a.email, a.role_id, a.picture, a.member_since 
                       FROM '.$this->_table.' a LEFT JOIN 
-                      cb_roles r ON r.role_id = a.role_id';
+                      cb_roles r ON r.role_id = a.role_id 
+                      ORDER BY a.username DESC';
 
             $stmt = $this->_connection->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    public function countAllAccounts() {
+        try {
+
+            $query = 'SELECT * FROM '.$this->_table;
+
+            $stmt = $this->_connection->prepare($query);
             $stmt->execute();
 
             return $stmt;

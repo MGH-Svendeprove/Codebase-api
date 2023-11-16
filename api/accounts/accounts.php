@@ -33,12 +33,16 @@ $db = $database->connect();
 $account = new Accounts($db);
 
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $data = $account->select($_GET['id']);
+
+    $data = $account->selectAll();
 
     if($data->rowCount()) {
-        $usr = [];
+
+        $users = [];
+
         while($row = $data->fetch(PDO::FETCH_OBJ)) {
-            $usr = [
+            $users[] = [
+                'account_id' => $row->account_id,
                 'username' => openssl_decrypt(
                     $row->username,
                     OPENSSL_CIPHERING,
@@ -54,13 +58,13 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
                     OPENSSL_ENCRYPT_IV
                 ),
                 'role_id' => $row->role_id,
+                'role' => $row->rolename,
                 'picture' => $row->picture,
-                'account_id' => $row->account_id
+                'member_since' => $row->member_since
             ];
         }
-
-        echo json_encode($usr);
+        echo json_encode($users);
     } else {
-        echo json_encode(['message' => 'There is no data to show.']);
+        echo json_encode(['message' => 'There is no accounts to find']);
     }
 }

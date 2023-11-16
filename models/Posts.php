@@ -226,4 +226,19 @@ class Posts {
         }
     }
 
+    public function countAllPosts() {
+        try {
+
+            $query = 'SELECT * FROM '.$this->_table;
+
+            $stmt = $this->_connection->prepare($query);
+            $stmt->execute();
+
+            return $stmt;
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
 }

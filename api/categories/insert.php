@@ -40,7 +40,19 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         if($cats->insert($params)) {
-            echo json_encode(['message' => 'Category has been created']);
+            $lastInsertId = $db->lastInsertId();
+            $data = $cats->select($lastInsertId);
+            if($data->rowCount()) {
+                $category = [];
+                while($row = $data->fetch(PDO::FETCH_OBJ)) {
+                    $category = [
+                      'category_id' => $row->category_id,
+                      'cat_title' => $row->cat_title,
+                      'cat_picture' => $row->cat_picture
+                    ];
+                }
+                echo json_encode($category);
+            }
         } else {
             echo json_encode(['message' => 'Category could not be created']);
         }
